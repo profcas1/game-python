@@ -69,7 +69,12 @@ def level_1():
     a = random.randint(100, 998)
     b = random.randint(1, 99)
     print(f"Level 1: Is {a} divisible by {b}? (no remainder)")
+
     ans = input("Answer 'y' for divisible, 'n' for remainder: ").strip().lower()
+    # if different than 'y' or 'n', ask again and again
+    while ans not in ("y", "n"):
+        print("Invalid input. Please answer 'y' or 'n'.")
+        ans = input("Answer 'y' for divisible, 'n' for remainder: ").strip().lower()
     divisible = (a % b) == 0
     player_says_divisible = ans in ("y", "yes")
     correct = (player_says_divisible == divisible)
@@ -79,39 +84,71 @@ def level_1():
     else:
         print(f"Incorrect. {a} % {b} = {a % b}")
         return False, LEVEL_1_STATE_ID
-
-
+    
 def level_2():
-    """Two-variant outcome. Success -> Level 4, Fail -> back to Level 1."""
-    print("Level 2: Riddle mock. Type 'open' to succeed.")
-    ok = input("); answer: ").strip().lower() == "open"
-    return (ok, LEVEL_4_STATE_ID if ok else LEVEL_1_STATE_ID)
+
+    print("Level 2: Welcome to the game on the second level.")
+
+    choice = input("You see a path ahead. Do you want to (1) Move forward or (2) Rest? ")
+        
+    # Validate user input
+    while not choice.isdigit() or int(choice) not in [1, 2]:
+        print("Invalid choice, try again.")
+        # global choice
+        choice = input("You see a path ahead. Do you want to (1) Move forward or (2) Rest? ")
+    
+    # Propert the choice to integer for further processing
+    if choice.isdigit() and int(choice) in [1, 2]:
 
 
-def level_3():
-    """Two-variant outcome. Success -> Level 5, Fail -> back to Level 1."""
-    print("Level 3: Switch mock. Type 'on' to succeed.")
-    ok = input("); answer: ").strip().lower() == "on"
-    return (ok, LEVEL_5_STATE_ID if ok else LEVEL_1_STATE_ID)
+
+        # Option 1: Move forward
+        if choice == '1':
+
+            # Function to simulate taking damage
+            # fight_enemy()
+            print("An enemy appears!")
+            dates = 3
+            while True:
+                print(f"You have {dates} dates left.")
+                action = input("Do you want to (3) Slash with scimitar or (4) Throw an dates? (enter 3 or 4): ")
+                if action == '3':
+                    print("You slash the enemy with your scimitar!")
+                    print("Enemy defeated!\n")
+                    break
+                elif action == '4':
+                    if dates <= 0:
+                        print("You ran out of dates! Game over.")
+                        return False, LEVEL_2_STATE_ID
+                        break
+                    dates -= 1
+                    print("You throw an dates at the enemy!")
+                    print("Enemy defeated!\n")
+                else:
+                    print("Invalid choice, try again.")
+            # End of function fight_enemy()
+
+            # Random chance to take damage (simulate enemy attack)
+            # 33 % chance of taking damage when enemy will simulate died and then take damage when wakeup when you will not looking
+            from random import randint
+            if randint(0,2) == 1:
+                print("You take damage from the enemy! (when enemy simulates died and then take damage when wakeup when you will not looking)")
+                import time
+                time.sleep(2)
+                game_state_dict["lives"] -= 1
+                return False, LEVEL_2_STATE_ID
+
+            print("You moved forward and found a hidden door and finded exit to end of the game.")
+            return True, END_STATE_ID
 
 
-def level_4():
-    """One-variant success mock forwarding to Level 6."""
-    print("Level 4: Simple step forward. Auto-success.")
-    return True, LEVEL_6_STATE_ID
 
-
-def level_5():
-    """One-variant success mock forwarding to Level 6."""
-    print("Level 5: Simple step forward. Auto-success.")
-    return True, LEVEL_6_STATE_ID
-
-
-def level_6():
-    """Final gate. Success ends with win, fail reduces life and loops here."""
-    print("Level 6: Final wish. Type 'wish' to win.")
-    ok = input("); answer: ").strip().lower() == "wish"
-    return (ok, END_STATE_ID if ok else LEVEL_6_STATE_ID)
+        # Option 2: Rest
+        elif choice == '2':
+            print("You rest and restore your health to full.")
+            # Set in global variable health to 3
+            game_state_dict["lives"] = 3
+            return True, END_STATE_ID
 
 # Global Variables
 
@@ -121,10 +158,6 @@ WELCOME_STATE_ID = "WELCOME_STATE_ID"
 INTRO_STATE_ID = "INTRO_STATE_ID"
 LEVEL_1_STATE_ID = "LEVEL_1_STATE_ID"
 LEVEL_2_STATE_ID = "LEVEL_2_STATE_ID"
-LEVEL_3_STATE_ID = "LEVEL_3_STATE_ID"
-LEVEL_4_STATE_ID = "LEVEL_4_STATE_ID"
-LEVEL_5_STATE_ID = "LEVEL_5_STATE_ID"
-LEVEL_6_STATE_ID = "LEVEL_6_STATE_ID"
 END_STATE_ID = "END_STATE_ID"
 
 
@@ -153,23 +186,6 @@ def handler_level_1(gs: Dict[str, object]):
 def handler_level_2(gs: Dict[str, object]):
     handle_level(gs, level_2)
 
-
-def handler_level_3(gs: Dict[str, object]):
-    handle_level(gs, level_3)
-
-
-def handler_level_4(gs: Dict[str, object]):
-    handle_level(gs, level_4)
-
-
-def handler_level_5(gs: Dict[str, object]):
-    handle_level(gs, level_5)
-
-
-def handler_level_6(gs: Dict[str, object]):
-    handle_level(gs, level_6)
-
-
 def handler_end(gs: Dict[str, object]):
     handle_end(gs)
 
@@ -182,10 +198,6 @@ def build_handlers(gs: Dict[str, object]):
         INTRO_STATE_ID: handler_intro,
         LEVEL_1_STATE_ID: handler_level_1,
         LEVEL_2_STATE_ID: handler_level_2,
-        LEVEL_3_STATE_ID: handler_level_3,
-        LEVEL_4_STATE_ID: handler_level_4,
-        LEVEL_5_STATE_ID: handler_level_5,
-        LEVEL_6_STATE_ID: handler_level_6,
         END_STATE_ID: handler_end,
     }
 
