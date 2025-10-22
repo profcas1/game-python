@@ -111,7 +111,7 @@ def level_2():
             dates = 3
             while True:
                 print(f"You have {dates} dates left.")
-                action = input("Do you want to (3) Slash with scimitar or (4) Throw an dates? (enter 3 or 4): ")
+                action = input("Do you want to (3) Slash with a scimitar or (4) Throw a date? (enter 3 or 4): ")
                 if action == '3':
                     print("You slash the enemy with your scimitar!")
                     print("Enemy defeated!\n")
